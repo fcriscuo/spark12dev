@@ -59,7 +59,7 @@ public class CosmicSparkSQL {
         System.out.println("=== Data source: Parquet File ===");
         // DataFrames can be saved as parquet files, maintaining the schema information.
         cosmicSchema.saveAsParquetFile("/tmp/spark/resources/cosmic_sample.parquet");
-        
+
 
     }
 
