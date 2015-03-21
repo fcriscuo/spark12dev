@@ -46,7 +46,6 @@ public class CosmicSparkSQL {
         List<String> ptenResults = ptenRDD.toJavaRDD().map(new Function<Row, String>() {
             @Override
             public String call(Row row) {
-
                 return "Gene Name: " + row.getString(0) + " CDS Length " + row.getString(1) +
                         " Tumor ID " + row.getString(2);
 
@@ -59,10 +58,27 @@ public class CosmicSparkSQL {
         System.out.println("=== Data source: Parquet File ===");
         // DataFrames can be saved as parquet files, maintaining the schema information.
         cosmicSchema.saveAsParquetFile("/tmp/spark/resources/cosmic_sample.parquet");
+        // read in the same parquet file, which is self describing
+        DataFrame parquetFrame = sqlCtx.parquetFile("/tmp/spark/resources/cosmic_sample.parquet");
+        // execute additional SQL against this data frame
 
+        parquetFrame.registerTempTable("parquetFrame");
+        DataFrame krasData = sqlCtx.sql(
+                "SELECT geneName,primaryHistology, mutationCDS, mutationAA from parquetFrame where geneName = 'KRAS'"
+        );
+        List<String>krasResults = krasData.toJavaRDD().map(new Function<Row, String>() {
+            @Override
+            public String call(Row row) throws Exception {
+                return "Gene name " +row.getString(0)
+                        +" primary histology: " +row.getString(1)
+                        +" CDS mutation: " + row.getString(2)
+                        +" AA mutation: " + row.getString(3);
 
+        }}).collect();
+        for (String s : krasResults){
+            System.out.println(s);
+        }
     }
-
     public static class CosmicRecord {
         private String geneName;
         private String accessionNumber;
