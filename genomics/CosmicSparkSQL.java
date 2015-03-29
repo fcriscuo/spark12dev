@@ -23,7 +23,6 @@ public class CosmicSparkSQL {
     /*
     Represents a class that can support in-memory SQL queries against the complete Cosmic Mutation File
      */
-
     public static void main(String[] args) throws Exception {
         SparkConf sparkConf = new SparkConf().setAppName("JavaSparkSQL").setMaster("local");
         JavaSparkContext ctx = new JavaSparkContext(sparkConf);
@@ -48,13 +47,11 @@ public class CosmicSparkSQL {
             public String call(Row row) {
                 return "Gene Name: " + row.getString(0) + " CDS Length " + row.getString(1) +
                         " Tumor ID " + row.getString(2);
-
             }
         }).collect();
         for (String line : ptenResults) {
             System.out.println(line);
         }
-
         System.out.println("=== Data source: Parquet File ===");
         // DataFrames can be saved as parquet files, maintaining the schema information.
         cosmicSchema.saveAsParquetFile("/tmp/spark/resources/cosmic_sample.parquet");
